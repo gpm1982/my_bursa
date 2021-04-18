@@ -11,6 +11,7 @@ Prerequisites
    telegram-send --config OSTrade.conf --configure-channel
 4. streamlit (https://streamlit.io/)
    Turns data scripts into shareable web apps in minutes.
+5. Git (https://github.com/)
 
 Configure Database
 ------------------

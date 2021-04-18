@@ -48,8 +48,25 @@ stock_prices = load_stock_prices()
 
 stock_symbol = st.selectbox('Select Stock', data.index)
 stock_info = data.loc[stock_symbol]
-st.text("{0} ({1})".format(stock_info['corporatename'], stock_symbol))
-chart_df = stock_prices.loc[stock_symbol]
+st.text("Technical Analysis for {0} ({1})".format(stock_info['corporatename'], stock_symbol))
+stock_df = stock_prices.loc[stock_symbol]
+
+st.subheader('Close Price with 200-day Moving Average')
+chart_df = stock_df[['date', 'close', 'ma200']]
+chart_df = chart_df.set_index(pd.DatetimeIndex(chart_df['date'].values))
+chart_df = chart_df.drop(columns=['date'])
+#st.write(chart_df)
+st.line_chart(data=chart_df, width=0, height=0, use_container_width=True)
+
+st.subheader('MACD')
+chart_df = stock_df[['date', 'macd', 'signal line']]
+chart_df = chart_df.set_index(pd.DatetimeIndex(chart_df['date'].values))
+chart_df = chart_df.drop(columns=['date'])
+#st.write(chart_df)
+st.line_chart(data=chart_df, width=0, height=0, use_container_width=True)
+
+st.subheader('Relative Strength Index (RSI)')
+chart_df = stock_df[['date', 'rsi']]
 chart_df = chart_df.set_index(pd.DatetimeIndex(chart_df['date'].values))
 chart_df = chart_df.drop(columns=['date'])
 #st.write(chart_df)
