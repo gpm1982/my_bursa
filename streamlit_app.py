@@ -1,3 +1,4 @@
+# TODO: https://discuss.streamlit.io/t/stock-market-profile-chart/10751
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -6,7 +7,9 @@ import gzip
 import io
 import urllib.request
 
-st.title('MY Bursa Trading - Technical Analysis')
+title = 'MY Bursa Trading - Technical Analysis'
+st.set_page_config(page_title=title, layout='wide')
+st.title(title)
 
 #DATE_COLUMN = 'date/time'
 COUNTERS_URL = ('https://raw.githubusercontent.com/'
