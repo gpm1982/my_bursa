@@ -1,11 +1,15 @@
 # TODO: https://discuss.streamlit.io/t/stock-market-profile-chart/10751
 import streamlit as st
+import datetime as dt
 import pandas as pd
 import numpy as np
 
-import gzip
 import io
+import gzip
 import urllib.request
+
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 title = 'MY Bursa Trading - Technical Analysis'
 st.set_page_config(page_title=title, layout='wide')
@@ -40,14 +44,8 @@ def load_stock_prices():
     data = data.set_index(['symbol'])
     return data
 
-#data_load_state = st.text('Loading data...')
 data = load_counters()
 stock_prices = load_stock_prices()
-#data_load_state.text("Done!")
-
-#if st.checkbox('Show raw data'):
-#    st.subheader('Raw data')
-#    st.write(data)
 
 stock_symbol = st.selectbox('Select Stock', data.index)
 stock_info = data.loc[stock_symbol]
@@ -58,19 +56,16 @@ st.subheader('Close Price with 200-day Moving Average')
 chart_df = stock_df[['date', 'close', 'ma200']]
 chart_df = chart_df.set_index(pd.DatetimeIndex(chart_df['date'].values))
 chart_df = chart_df.drop(columns=['date'])
-#st.write(chart_df)
 st.line_chart(data=chart_df, width=0, height=0, use_container_width=True)
 
 st.subheader('MACD')
 chart_df = stock_df[['date', 'macd', 'signal line']]
 chart_df = chart_df.set_index(pd.DatetimeIndex(chart_df['date'].values))
 chart_df = chart_df.drop(columns=['date'])
-#st.write(chart_df)
 st.line_chart(data=chart_df, width=0, height=0, use_container_width=True)
 
 st.subheader('Relative Strength Index (RSI)')
 chart_df = stock_df[['date', 'rsi']]
 chart_df = chart_df.set_index(pd.DatetimeIndex(chart_df['date'].values))
 chart_df = chart_df.drop(columns=['date'])
-#st.write(chart_df)
 st.line_chart(data=chart_df, width=0, height=0, use_container_width=True)
