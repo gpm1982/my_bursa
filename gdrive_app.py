@@ -5,6 +5,10 @@ from pydrive.auth import GoogleAuth, ServiceAccountCredentials
 from pydrive.drive import GoogleDrive
 from apiclient.http import MediaFileUpload
 
+title = 'Google Drive API Test'
+st.set_page_config(page_title=title, layout='wide')
+st.title(title)
+
 json_dict = {
   "type": "service_account",
   "project_id": "tensile-octagon-311403",
@@ -25,6 +29,6 @@ drive = GoogleDrive(gauth)
 
 # Paginate file lists by specifying number of max results
 for file_list in drive.ListFile({'q': 'trashed=false', 'maxResults': 10}):
-  print('Received %s files from Files.list()' % len(file_list)) # <= 10
+  st.text('Received %s files from Files.list()' % len(file_list)) # <= 10
   for file1 in file_list:
-    print('title: %s, id: %s, fileSize: %s' % (file1['title'], file1['id'], file1['fileSize']))
+    st.text('title: %s, id: %s, fileSize: %s' % (file1['title'], file1['id'], file1['fileSize']))
