@@ -69,3 +69,9 @@ chart_df = stock_df[['date', 'rsi']]
 chart_df = chart_df.set_index(pd.DatetimeIndex(chart_df['date'].values))
 chart_df = chart_df.drop(columns=['date'])
 st.line_chart(data=chart_df, width=0, height=0, use_container_width=True)
+
+st.subheader('Volume')
+chart_df = stock_df[['date', 'volume']]
+chart_df = chart_df.set_index(pd.DatetimeIndex(chart_df['date'].values))
+chart_df = chart_df.drop(columns=['date'])
+st.bar_chart(data=chart_df, width=0, height=0, use_container_width=True)
