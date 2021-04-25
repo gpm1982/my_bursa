@@ -1,5 +1,6 @@
-import streamlit as st
 import os
+import json
+import streamlit as st
 
 from pydrive.auth import GoogleAuth, ServiceAccountCredentials
 from pydrive.drive import GoogleDrive
@@ -9,6 +10,7 @@ title = 'Google Drive API Test'
 st.set_page_config(page_title=title, layout='wide')
 st.title(title)
 
+key_dict = json.loads(st.secrets["gdrive_key"])
 json_dict = {
   "type": "service_account",
   "project_id": st.secrets["GDRIVE_PROJID"],
@@ -24,7 +26,7 @@ json_dict = {
 
 gauth = GoogleAuth()
 scope = ['https://www.googleapis.com/auth/drive']
-gauth.credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_dict, scope)
+gauth.credentials = ServiceAccountCredentials.from_json_keyfile_dict(key_dict, scope)
 drive = GoogleDrive(gauth)
 
 # Paginate file lists by specifying number of max results

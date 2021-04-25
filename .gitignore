@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Secrets and API keys files
+.streamlit/
+*.json
