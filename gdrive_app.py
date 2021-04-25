@@ -11,18 +11,6 @@ st.set_page_config(page_title=title, layout='wide')
 st.title(title)
 
 key_dict = json.loads(st.secrets["gdrive_key"])
-json_dict = {
-  "type": "service_account",
-  "project_id": st.secrets["GDRIVE_PROJID"],
-  "private_key_id": st.secrets["GDRIVE_PKID"],
-  "private_key": st.secrets["GDRIVE_PKEY"],
-  "client_email": st.secrets["GDRIVE_CLIENT_EMAIL"],
-  "client_id": st.secrets["GDRIVE_CLIENT_ID"],
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/my-bursa-streamlit%40tensile-octagon-311403.iam.gserviceaccount.com"
-}
 
 gauth = GoogleAuth()
 scope = ['https://www.googleapis.com/auth/drive']
