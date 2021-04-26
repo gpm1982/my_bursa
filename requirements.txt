@@ -3,6 +3,7 @@ numpy
 pandas
 plotly
 streamlit
-google-cloud-firestore
+oauth2client
 google-auth-oauthlib
+google-cloud-firestore
 google-api-python-client
