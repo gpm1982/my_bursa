@@ -330,6 +330,15 @@ if rsi:
     fig.add_trace(
         go.Scatter(
             x=dateStr,
+            y=stock_df['ma200'],
+            mode='lines',
+            name="MA200"
+        ),
+        row=1, col=1
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=dateStr,
             y=stock_df['rsi'],
             mode='lines',
             name="RSI"
