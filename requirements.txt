@@ -4,4 +4,4 @@ pandas
 plotly
 streamlit
 google-cloud-firestore
-PyDrive
+google-auth-oauthlib
