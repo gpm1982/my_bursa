@@ -67,9 +67,9 @@ stock_prices=get_csv_to_pd(STOCK_PRICES)
 # Sidebar Options
 stock_symbol = st.sidebar.selectbox('Select Stock', stocks_info.index)
 stock_info = stocks_info.loc[stock_symbol]
-ema = st.sidebar.checkbox('Show EMA')
-macd = st.sidebar.checkbox('Show MACD')
-rsi = st.sidebar.checkbox('Show RSI')
+ema = st.sidebar.checkbox('Show EMA (18,50)')
+macd = st.sidebar.checkbox('Show MACD (12,26,9)')
+rsi = st.sidebar.checkbox('Show RSI (14)')
 
 # Populate data for selected stocks
 st.text("Technical Analysis for {0} ({1})".format(stock_info['corporatename'], stock_symbol))
@@ -136,8 +136,36 @@ config={
 
 st.plotly_chart(fig, use_container_width=True, config=config)
 
+# Generate buy/sell data, and return
+def buy_sell(data, short, long):
+    sigPriceBuy = []
+    sigPriceSell = []
+    sigFlag = -1
+
+    for i in range(len(data)):
+        if data[short][i] > data[long][i]:
+            sigPriceSell.append(np.nan)
+            if sigFlag != 1:
+                sigPriceBuy.append(data['close'][i])
+                sigFlag = 1
+            else:
+                sigPriceBuy.append(np.nan)
+        elif data[short][i] < data[long][i]:
+            sigPriceBuy.append(np.nan)
+            if sigFlag != 0:
+                sigPriceSell.append(data['close'][i])
+                sigFlag = 0
+            else:
+                sigPriceSell.append(np.nan)
+        else:
+            sigPriceBuy.append(np.nan)
+            sigPriceSell.append(np.nan)
+
+    return (sigPriceBuy, sigPriceSell)
+
+
+# Prepare second set of charts for EMA technical analysis
 if ema:
-    # Prepare second set of charts for EMA technical analysis
     fig = make_subplots(
         rows=2, cols=1,
         shared_xaxes=True,
@@ -145,28 +173,56 @@ if ema:
         vertical_spacing = 0.01
     )
 
-    # Let's display EMA (S=12, L=26)
+    # Let's display EMA (S=18, L=50)
     fig.add_trace(
-        go.Line(
+        go.Scatter(
             x=dateStr,
             y=stock_df['close'],
+            mode='lines',
             name="Close"
         ),
         row=1, col=1
     )
+    # Let's include buy/sell indicators
+    buy_signal, sell_signal = buy_sell(stock_df, 'ema18', 'ema50')
     fig.add_trace(
-        go.Line(
+        go.Scatter(
             x=dateStr,
-            y=stock_df['ema12'],
-            name="EMA12"
+            y=buy_signal,
+            mode='markers',
+            marker=dict(color='Green'),
+            marker_symbol='triangle-up',
+            name="Buy"
+        ),
+        row=1, col=1
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=dateStr,
+            y=sell_signal,
+            mode='markers',
+            marker=dict(color='Red'),
+            marker_symbol='triangle-down',
+            name="Sell"
+        ),
+        row=1, col=1
+    )
+    # Second chart with EMA values (short and long)
+    fig.add_trace(
+        go.Scatter(
+            x=dateStr,
+            y=stock_df['ema18'],
+            mode='lines',
+            name="EMA18"
         ),
         row=2, col=1
     )
     fig.add_trace(
-        go.Line(
+        go.Scatter(
             x=dateStr,
-            y=stock_df['ema26'],
-            name="EMA26"
+            y=stock_df['ema50'],
+            mode='lines',
+            name="EMA50"
         ),
         row=2, col=1
     )
@@ -177,10 +233,11 @@ if ema:
         title_text="Exponential Moving Average (Short=12d, Long=26d)"
     )
 
+    fig.update_yaxes(fixedrange=True)
     st.plotly_chart(fig, use_container_width=True, config=config)
 
+# Prepare second set of charts for MACD technical analysis
 if macd:
-    # Prepare second set of charts for MACD technical analysis
     fig = make_subplots(
         rows=2, cols=1,
         shared_xaxes=True,
@@ -190,25 +247,53 @@ if macd:
 
     # Let's display MACD (S=12, L=26, EMA=9)
     fig.add_trace(
-        go.Line(
+        go.Scatter(
             x=dateStr,
             y=stock_df['close'],
+            mode='lines',
             name="Close"
         ),
         row=1, col=1
     )
+    # Let's include buy/sell indicators
+    buy_signal, sell_signal = buy_sell(stock_df, 'macd', 'signal line')
     fig.add_trace(
-        go.Line(
+        go.Scatter(
+            x=dateStr,
+            y=buy_signal,
+            mode='markers',
+            marker=dict(color='Green'),
+            marker_symbol='triangle-up',
+            name="Buy"
+        ),
+        row=1, col=1
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=dateStr,
+            y=sell_signal,
+            mode='markers',
+            marker=dict(color='Red'),
+            marker_symbol='triangle-down',
+            name="Sell"
+        ),
+        row=1, col=1
+    )
+    # Second chart with MACD and Signal Lines values
+    fig.add_trace(
+        go.Scatter(
             x=dateStr,
             y=stock_df['macd'],
+            mode='lines',
             name="MACD"
         ),
         row=2, col=1
     )
     fig.add_trace(
-        go.Line(
+        go.Scatter(
             x=dateStr,
             y=stock_df['signal line'],
+            mode='lines',
             name="Signal Line"
         ),
         row=2, col=1
@@ -220,10 +305,11 @@ if macd:
         title_text="Moving Average Convergence Divergence (Short=12d, Long=26d, EMA=9d)"
     )
 
+    fig.update_yaxes(fixedrange=True)
     st.plotly_chart(fig, use_container_width=True, config=config)
 
+# Prepare second set of charts for RSI technical analysis
 if rsi:
-    # Prepare second set of charts for RSI technical analysis
     fig = make_subplots(
         rows=2, cols=1,
         shared_xaxes=True,
@@ -233,17 +319,19 @@ if rsi:
 
     # Let's display RSI (Period=14d)
     fig.add_trace(
-        go.Line(
+        go.Scatter(
             x=dateStr,
             y=stock_df['close'],
+            mode='lines',
             name="Close"
         ),
         row=1, col=1
     )
     fig.add_trace(
-        go.Line(
+        go.Scatter(
             x=dateStr,
             y=stock_df['rsi'],
+            mode='lines',
             name="RSI"
         ),
         row=2, col=1
@@ -255,4 +343,6 @@ if rsi:
         title_text="Relative Strength Index (Period=14d)"
     )
 
+    fig.update_yaxes(fixedrange=True)
+    fig.update_yaxes(range=[0, 100], row=2, col=1)
     st.plotly_chart(fig, use_container_width=True, config=config)
