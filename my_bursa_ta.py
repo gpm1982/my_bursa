@@ -127,6 +127,7 @@ fig.add_trace(
 
 fig.update_layout(
     showlegend=False,
+    hovermode='x',
     height=700,
     xaxis_rangeslider_visible=False,
     title_text="Stock Price with 200-day Moving Average"
@@ -231,6 +232,7 @@ if ema:
 
     fig.update_layout(
         showlegend=False,
+        hovermode='x',
         height=700,
         title_text="Exponential Moving Average (Short=12d, Long=26d)"
     )
@@ -303,6 +305,7 @@ if macd:
 
     fig.update_layout(
         showlegend=False,
+        hovermode='x',
         height=700,
         title_text="Moving Average Convergence Divergence (Short=12d, Long=26d, EMA=9d)"
     )
@@ -352,6 +355,7 @@ if rsi:
 
     fig.update_layout(
         showlegend=False,
+        hovermode='x',
         height=700,
         title_text="Relative Strength Index (Period=14d)"
     )
@@ -411,6 +415,7 @@ if stochastic:
 
     fig.update_layout(
         showlegend=False,
+        hovermode='x',
         height=700,
         title_text="Stochastic Oscillator Indicator (%K=14, %D=3)"
     )
