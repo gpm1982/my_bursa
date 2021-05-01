@@ -70,6 +70,7 @@ stock_info = stocks_info.loc[stock_symbol]
 ema = st.sidebar.checkbox('Show EMA (18,50)')
 macd = st.sidebar.checkbox('Show MACD (12,26,9)')
 rsi = st.sidebar.checkbox('Show RSI (14)')
+stochastic = st.sidebar.checkbox('Show Stochastic (14,3)')
 
 # Populate data for selected stocks
 st.write("[{0}]({1}) ({2} - {3})".format(stock_info['corporatename'], stock_info['website'], stock_symbol, stock_info['code']))
@@ -165,7 +166,7 @@ def buy_sell(data, short, long):
     return (sigPriceBuy, sigPriceSell)
 
 
-# Prepare second set of charts for EMA technical analysis
+# Prepare a set of charts for EMA technical analysis
 if ema:
     fig = make_subplots(
         rows=2, cols=1,
@@ -237,7 +238,7 @@ if ema:
     fig.update_yaxes(fixedrange=True)
     st.plotly_chart(fig, use_container_width=True, config=config)
 
-# Prepare second set of charts for MACD technical analysis
+# Prepare a set of charts for MACD technical analysis
 if macd:
     fig = make_subplots(
         rows=2, cols=1,
@@ -309,7 +310,7 @@ if macd:
     fig.update_yaxes(fixedrange=True)
     st.plotly_chart(fig, use_container_width=True, config=config)
 
-# Prepare second set of charts for RSI technical analysis
+# Prepare a set of charts for RSI technical analysis
 if rsi:
     fig = make_subplots(
         rows=2, cols=1,
@@ -346,11 +347,72 @@ if rsi:
         ),
         row=2, col=1
     )
+    fig.add_hline(y=30, opacity=0.5, line_color="green", annotation_text="Oversold", annotation_position="bottom left", row=2, col=1)
+    fig.add_hline(y=70, opacity=0.5, line_color="red", annotation_text="Overbought", annotation_position="top left", row=2, col=1)
 
     fig.update_layout(
         showlegend=False,
         height=700,
         title_text="Relative Strength Index (Period=14d)"
+    )
+
+    fig.update_yaxes(fixedrange=True)
+    fig.update_yaxes(range=[0, 100], row=2, col=1)
+    st.plotly_chart(fig, use_container_width=True, config=config)
+
+# Prepare a set of charts for RSI technical analysis
+if stochastic:
+    fig = make_subplots(
+        rows=2, cols=1,
+        shared_xaxes=True,
+        horizontal_spacing = 0.01,
+        vertical_spacing = 0.01
+    )
+
+    # Let's display Stochastic Oscillator Indicator (Period=14d)
+    fig.add_trace(
+        go.Scatter(
+            x=dateStr,
+            y=stock_df['close'],
+            mode='lines',
+            name="Close"
+        ),
+        row=1, col=1
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=dateStr,
+            y=stock_df['ma200'],
+            mode='lines',
+            name="MA200"
+        ),
+        row=1, col=1
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=dateStr,
+            y=stock_df['%k'],
+            mode='lines',
+            name="%K"
+        ),
+        row=2, col=1
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=dateStr,
+            y=stock_df['%d'],
+            mode='lines',
+            name="%D"
+        ),
+        row=2, col=1
+    )
+    fig.add_hline(y=20, opacity=0.5, line_color="green", annotation_text="Oversold", annotation_position="bottom left", row=2, col=1)
+    fig.add_hline(y=80, opacity=0.5, line_color="red", annotation_text="Overbought", annotation_position="top left", row=2, col=1)
+
+    fig.update_layout(
+        showlegend=False,
+        height=700,
+        title_text="Stochastic Oscillator Indicator (%K=14, %D=3)"
     )
 
     fig.update_yaxes(fixedrange=True)
