@@ -64,8 +64,15 @@ STOCK_PRICES = '1O-pXLZKGNcLlP3entttVVHAUjQGaIsYw'
 stocks_info=get_csv_to_pd(STOCKS_INFO)
 stock_prices=get_csv_to_pd(STOCK_PRICES)
 
+# Get list of sectors
+sectors_list = stocks_info['sector'].unique().tolist()
+
 # Sidebar Options
-stock_symbol = st.sidebar.selectbox('Select Stock', stocks_info.index)
+sector_names = st.sidebar.multiselect('Select Sector(s)', sectors_list)
+if len(sector_names) == 0:
+  stock_symbol = st.sidebar.selectbox('Select Stock', stocks_info.index)
+else:
+  stock_symbol = st.sidebar.selectbox('Select Stock', stocks_info.index[stocks_info['sector'].isin(sector_names)])
 stock_info = stocks_info.loc[stock_symbol]
 ema = st.sidebar.checkbox('Show EMA (18,50)')
 macd = st.sidebar.checkbox('Show MACD (12,26,9)')
