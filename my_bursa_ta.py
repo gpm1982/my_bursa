@@ -81,7 +81,7 @@ stochastic = st.sidebar.checkbox('Show Stochastic (14,3)')
 
 # Populate data for selected stocks
 st.write("[{0}]({1}) ({2} - {3})".format(stock_info['corporatename'], stock_info['website'], stock_symbol, stock_info['code']))
-st.write("{0} - {1}".format(stock_info['market'], stock_info['sector']))
+st.write("{0} - {1} - {2}".format(stock_info['market'], stock_info['sector'], stock_info['subsector']))
 stock_df = stock_prices.loc[stock_symbol]
 stock_df = stock_df.set_index(pd.DatetimeIndex(stock_df['date'].values))
 stock_df = stock_df.drop(columns=['date'])
